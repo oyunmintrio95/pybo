@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os  #logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -122,6 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
@@ -130,3 +132,58 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+	    'version': 1,
+	    'disable_existing_loggers': False,
+	    'filters': {
+	        'require_debug_false': {
+	            '()': 'django.utils.log.RequireDebugFalse',
+	        },
+	        'require_debug_true': {
+	            '()': 'django.utils.log.RequireDebugTrue',
+	        },
+	    },
+	    # 형식정의
+	    'formatters': {
+	        'format1': {'format': '[%(asctime)s] %(module)s -%(lineno)d %(levelname)s %(message)s','datefmt': "%Y-%m-%d %H:%M:%S"},
+	        'format2': {'format': '%(levelname)s %(message)s [%(name)s:%(lineno)s]'},
+	    },
+	    'handlers': {
+	        # 파일저장
+	        'file': {
+	                'level': 'INFO',
+	                'class': 'logging.handlers.RotatingFileHandler',
+	                'filename': os.path.join(BASE_DIR, 'logs/python_pybo.log'),
+	                'encoding': 'UTF-8',
+	                'maxBytes': 1024 * 1024 * 5,  # 5 MB
+	                'backupCount': 5,
+	                'formatter': 'format1',
+	                },
+	        # 콘솔(터미널)에 출력
+	        'console': {
+	            'level': 'INFO',
+	            'filters': ['require_debug_true'],
+	            'class': 'logging.StreamHandler',
+                'formatter': 'format1'
+	        },
+	    },
+	    'loggers': {
+	        #종류
+	        'django.server': {
+	            'handlers': ['file','console'],
+	            'propagate': False,
+	            'level': 'DEBUG',
+	        },
+	        'django.request': {
+	            'handlers':['file','console'],
+	            'propagate': False,
+	            'level':'DEBUG',
+	        },
+	        '': {
+	            'level': 'DEBUG',
+	            'handlers': ['file','console'],
+	            'propagate': True,
+	        },
+	    },
+	}

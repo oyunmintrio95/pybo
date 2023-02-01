@@ -9,6 +9,7 @@
  .idea/mysite.iml
 static/favicon.ico
 
+db.sqbpro
 *.log
 *.pot
 *.pyc
@@ -23,7 +24,7 @@ mediaㅎ
 # <django-project-name>/staticfiles/
 
 ### Django.Python Stack ###
-# Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL filesg
 *.py[cod]
 *$py.class
 

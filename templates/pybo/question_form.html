@@ -3,13 +3,44 @@
     <!--container-->
     <div class="container">
         <!--제목-->
-        <div class="text-start mb-5">
+        <div class="text-start mt-3 mb-5">
             <h2>질문등록</h2>
         </div>
 
         <form method="post" action="{%url 'pybo:question_create' %}" class="">
             {% csrf_token %}
-            {{ form.as_p}} <!--모델 폼과 연결된 subjec, content에 값을 저장할 수 있는 폼을 만들 수 있다.-->
+            <!--form validation 기능-->
+            {% if form.errors %}
+            <div class="alert alert-warning" role="alert">
+                {% for field in form%}
+                    {%if field.errors %}
+                        <div><strong>{{field.label}}</strong></div>
+                        {{field.errors}}
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+            {% endif %}
+            <!--form validation 기능 end--------------------------------------------------------->
+
+             <div class="mb-3">
+                <label for="subject" class="col-form-label">제목</label>
+                <div class="">
+                    <!--템플릿 필터
+                        템플릿 필터는 변수 값을 특정한 포맷으로 변경하는 기능.-->
+                  <input type="text" class="form-control" id="subject" name="subject"
+                     value="{{form.subject.value|default_if_none:''}}"
+                  >
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">내용</label>
+                <div class="">
+                    <!--content의 데이터가 없으면 none이라는 문자열이 표시 됨, None 대신 공백으로 표시하세요.-->
+                  <textarea rows="10" cols="20" class="form-control" name="content" id="content">{{form.content.value|default_if_none:''}}</textarea>
+                </div>
+            </div>
+<!--            {{ form.as_p}} &lt;!&ndash;모델 폼과 연결된 subject, content에 값을 저장할 수 있는 폼을 만들 수 있다.&ndash;&gt;-->
             <button type="submit" class="btn btn-primary btn-sm">저장</button>
         </form>
     </div>
