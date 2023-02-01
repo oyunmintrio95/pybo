@@ -3,6 +3,28 @@ from django.utils import timezone
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse
 from .models import Question,Answer
+from .forms import QuestionForm
+
+def question_create(request):
+    '''질문등록'''
+
+    print('1.request.method:{}'.format(request.method))
+    if request.method == 'POST':
+        print('2.queston_create post')
+        #저장
+        form = QuestionForm(request.POST) #request.POST 데이터
+        print('3.queston_create post')
+        if form.is_valid(): #form(질문등록)이 유효하면 등록
+            print('4.form.is_valid():{}'.format(form.is_valid()))
+            question = form.save(commit=False) #subject, content만 저장(확정(commit)은 하지 않음.=> 날짜가 없기 때문에)
+            question.create_date = timezone.now()
+            question.save() #날짜까지 생성해서 저장(Commit)
+            return redirect('pybo:index')
+    else:
+        form = QuestionForm()
+        context = {'form': form}
+        return render(request, 'pybo/question_form.html', context)
+
 #bootstrap list
 def boot_menu(request):
     '''개발에 사용되는 임시 메뉴'''

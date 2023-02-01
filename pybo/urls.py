@@ -15,6 +15,7 @@ urlpatterns = [
     path('',views.index, name='index'),   #view index로 메핑
     path('<int:question_id>/',views.detail, name='detail'), #views.py의 detail method
     path('answer/create/<int:question_id>/',views.answer_create,name='answer_create'),
+    path('question/create/',views.question_create, name='question_create'),
     #temp menu
     path('boot/menu/', views.boot_menu, name='boot_menu'),
     #bootstrap template

@@ -2,6 +2,13 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,pycharm,python,django
 
 ### Django ###
+ .idea/.gitignore
+ .idea/inspectionProfiles/
+ .idea/misc.xml
+ .idea/modules.xml
+ .idea/mysite.iml
+static/favicon.ico
+
 *.log
 *.pot
 *.pyc
@@ -9,7 +16,7 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media
+mediaㅎ
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
