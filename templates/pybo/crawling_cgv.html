@@ -3,8 +3,11 @@
     <div class="container">
         <!--제목-->
         <div class="text-start mt-3 mb-5">
-            <h2>질문목록</h2>
+            <h2>무비차트</h2>
         </div>
+        {{title}}<br>
+        {{reserve}}<br>
+        {{poster}}
         <!--제목 end-->
         <!--검색, 버튼-->
         <div class="d-grid gap-2 d-md-flex justify-content-end mb-3">
@@ -49,14 +52,21 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% if title%}
+                {% for t in title%}
                     <tr>
                         <td class="text-center">1</td> <!--가운데 정렬-->
-                        <td class="text-start">제목</td>  <!--왼쪽 정렬-->
+                        <td class="text-start">{{t}}</td>  <!--왼쪽 정렬-->
                         <td class="text-center">이상무</td>
                         <td class="text-center">2023-01-23</td>
                         <td class="text-end">1</td>     <!--오른쪽 정렬-->
                     </tr>
-
+                {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="99">no data found.</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>

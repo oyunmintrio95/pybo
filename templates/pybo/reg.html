@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!--    크기의 확대축소를 못하도록 제한하는 것(down-below)-->
-    <meta  name="viewport" content="width=device-width,initial-scale=1.0">
-    {% load static %} <!--css, js, images 로딩 최상단에 위치!-->
-    <link rel="stylesheet" type="text/css" href="{%static 'style.css'%}">
-    <!--Bootstrap  -->
-    <link rel="stylesheet" type="text/css" href="{%static 'bootstrap.min.css' %}">
-    <title>게시 등록</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
     <div class="container">
         <!--제목-->
         <div class="text-start mt-3 mb-5">
@@ -52,6 +41,4 @@
         <!--등록 form end-->
     </div>
     <!--container end-->
-
-</body>
-</html>
+{% endblock %}

@@ -5,6 +5,55 @@ from django.http import HttpResponse, HttpResponseNotAllowed
 from .models import Question,Answer
 from .forms import QuestionForm, AnswerForm
 import logging
+from bs4 import BeautifulSoup
+import requests
+
+
+
+
+def crawling_cgv(request):
+    '''CGV 무비차트'''
+    url = 'http://www.cgv.co.kr/movies/?lt=1&ft=0'
+    response = requests.get(url)
+
+    if 200 == response.status_code:
+        html = response.text
+        # print('html:{}'.format(html))
+
+        # box-contents
+        soup = BeautifulSoup(html, 'html.parser')
+        title = soup.select('div.box-contents strong.title')
+        reserve = soup.select('div.score strong.percent span')
+        poster = soup.select('span.thumb-image img')
+
+        title_list=[]
+        #예매율
+        reserve_list = []
+        poster_list = []
+
+
+
+        # context={'title':title.getText()}
+
+        for page in range(0, 7, 1):
+            posterImg = poster[page]
+            # print('posterImg:{}'.format(posterImg))
+            imgUrlPath = posterImg.get('src')
+            # print('imgUrlPath:{}'.format(imgUrlPath))
+            title_list.append(title[page].getText())
+            reserve_list.append(reserve[page].getText())
+            poster_list.append(imgUrlPath)
+            print('title[page]:{},{}'.format(title[page].getText()
+                                             , reserve[page].getText()
+                                             , imgUrlPath
+                                             ))
+
+        context = {'title':title_list, 'reserve':reserve_list, 'poster': poster_list}
+
+    else:
+        print('접속오류 response.status_code:{}'.format(response.status_code))
+    return render(request, 'pybo/crawling_cgv.html', context)
+
 
 def question_create(request):
     '''질문등록'''
@@ -61,6 +110,7 @@ def answer_create(request, question_id):
     # Question과 Answer 처럼 서로 연결되어 있는 경우 연결 모델명 _set 연결데이터를 조회 할 수 있다.
     # question.answer_set.create(content=request.POST.get('content'), create_date=timezone.now())
     # return redirect('pybo:detail',question_id=question_id)
+
 
 
 def detail(request, question_id):
