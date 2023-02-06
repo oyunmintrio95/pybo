@@ -9,20 +9,8 @@
 
         <form method="post" action="{%url 'pybo:question_create' %}" class="">
             {% csrf_token %}
-            <!--form validation 기능-->
-            {% if form.errors %}
-            <div class="alert alert-warning" role="alert">
-                {% for field in form%}
-                    {%if field.errors %}
-                        <div><strong>{{field.label}}</strong></div>
-                        {{field.errors}}
-                    {% endif %}
-                {% endfor %}
-
-            </div>
-            {% endif %}
-            <!--form validation 기능 end--------------------------------------------------------->
-
+            <!--form validation-->
+            {% include "form_error.html" %}
              <div class="mb-3">
                 <label for="subject" class="col-form-label">제목</label>
                 <div class="">

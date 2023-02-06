@@ -5,93 +5,28 @@
         <div class="text-start mt-3 mb-5">
             <h2>무비차트</h2>
         </div>
-        {{title}}<br>
-        {{reserve}}<br>
-        {{poster}}
-        <!--제목 end-->
-        <!--검색, 버튼-->
-        <div class="d-grid gap-2 d-md-flex justify-content-end mb-3">
-            <!--검색 form-->
-            <form action="#" class="col-sm-11 col-md-11 col-lg-11 text-end">
-                <select class="form-select-sm">
-                    <option selected>전체</option>
-                    <option value="10">제목</option>
-                    <option value="20">내용</option>
-                    <option value="30">작성자</option>
-                </select>
-                <input type="text" class="form-control-sm" placeholder="검색어">
-                <select class="form-select-sm">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-            </form>
-            <!--form end-->
-
-            <!--form 안에 button을 넣지 않는 이유는 두번 조회될 경우가 생길 수 있기 때문이다.-->
-            <!--button-->
-            <div class="col-sm-1 col-md-1 col-lg-1 text-end">
-                <input type="button" class="btn btn-primary btn-sm" value="조회">
-                <input type="button" class="btn btn-primary btn-sm" value="등록">
-            </div>
-            <!--button end-->
-        </div>
-        <!--검색, 버튼 end-->
-        <!--table-->
+        <hr class="border-primary border-3">
         <div class="container">
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                    <tr class="table-dark">
-                        <th scope="col" class="text-center">NO.</th>
-                        <th scope="col" class="text-center">제목</th>
-                        <th scope="col" class="text-center">작성자</th>
-                        <th scope="col" class="text-center">작성일</th>
-                        <th scope="col" class="text-center">조회수</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% if title%}
-                {% for t in title%}
-                    <tr>
-                        <td class="text-center">1</td> <!--가운데 정렬-->
-                        <td class="text-start">{{t}}</td>  <!--왼쪽 정렬-->
-                        <td class="text-center">이상무</td>
-                        <td class="text-center">2023-01-23</td>
-                        <td class="text-end">1</td>     <!--오른쪽 정렬-->
-                    </tr>
+                {% if context%}
+                <div class="row">
+                {%for t,r,p in context %}
+
+                    <div class="card col-3 p-3" style="width: 18rem;">
+                      <img src="{{p}}" class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">{{t}},{{r}}</h5>
+                        <p class="card-text"></p>
+                        <a href="#" class="btn btn-primary">예매하기</a>
+                      </div>
+                    </div>
                 {% endfor %}
+                </div>
                 {% else %}
-                    <tr>
-                        <td colspan="99">no data found.</td>
-                    </tr>
+                    <p>
+                        no data found.
+                    </p>
                 {% endif %}
-                </tbody>
-            </table>
         </div>
     </div>
     <!--table end-->
-
-    <!--paging-->
-    <div class="d-grid gap-2 d-md-flex justify-content-center mb-3">
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-    </div>
-    <!--paging end-->
 {% endblock %}

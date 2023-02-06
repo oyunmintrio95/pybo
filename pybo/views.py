@@ -1,5 +1,5 @@
 from django.utils import timezone
-
+from django.core.paginator import Paginator
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse, HttpResponseNotAllowed
 from .models import Question,Answer
@@ -48,7 +48,7 @@ def crawling_cgv(request):
                                              , imgUrlPath
                                              ))
 
-        context = {'title':title_list, 'reserve':reserve_list, 'poster': poster_list}
+        context = {'context':zip(title_list,reserve_list,poster_list)}
 
     else:
         print('접속오류 response.status_code:{}'.format(response.status_code))
@@ -129,10 +129,32 @@ def index(request):
     logging.info('index 레벨로 출력')
     # print('index 레벨로 출력')
     #list order create_date desc
+
+    #입력인자: http://127.0.0.1:8000/pybo/1
+    page = request.GET.get('page','1')
+    logging.info('page:{}'.format(page))
+
     question_list = Question.objects.order_by('-create_date') # order_by('-필드')=>DESC
+    #paging
+
+    paginator = Paginator(question_list,10)
+    page_obj = paginator.get_page(page)
+
+    # paginator.count: 전체 게시물 개수
+    # paginator.per_oage:페이지당 보여줄 게시물 개수
+    # paginator.per_range: 페이지 범위
+    # number: 현재 페이지 번호
+    # previous_page_number: 이전 페이지 번호
+    # next_page_number: 다음 페이지 번호
+    # has_previous: 이전 페이지 유무
+    # has_naext: 다음 페이지 유무
+    # start_index : 현재 페이지 시작 인덱스(1부터 시작)
+    # end_index: 현재 페이지 끝 인덱스
+
+
     # question_list = Question.objects.filter(id=99)
-    context = {'question_list':question_list}
-    logging.info('question_list:{}'.format(question_list))
+    context = {'question_list':page_obj}
+    logging.info('question_list:{}'.format(page_obj))
 
     return render(request,'pybo/question_list.html',context)
 

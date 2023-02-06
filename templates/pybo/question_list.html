@@ -1,42 +1,94 @@
+
     {% extends 'base.html' %}
-    {% block content%}
-    <!--container-->
-    <div class="container mt-5">
-        <!--title-->
+    {% load pybo_filter %} <!-- 사용자 정의 필터 로드-->
+    {% block content %}
+    <!-- container-->
+    <div class="container">
+        <!-- 제목 -->
         <div class="text-start mb-5">
-            <h2>질문 목록</h2>
+            <h2>질문목록</h2>
         </div>
-        <!--title end-->
-        <!--button-->
         <div class="text-end my-1">
-            <a href="{% url 'pybo:question_create'%}" class="btn btn-primary btn-sm">등록</a>
+            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary btn-sm">등록</a>
         </div>
-        <!--button end-->
-        <table class="table table-striped table-bordered">
+        <!-- 제목 end-->
+        <table class="table table-striped table-hover table-bordered table-sm">
             <thead>
-                <tr class="table-dark">
-                    <th scope="col" class="text-center">번호</th>
-                    <th scope="col" class="text-center">제목</th>
-                    <th scope="col" class="text-center">등록일</th>
-                </tr>
+               <tr class="table-dark">
+                <th scope="col" class="text-center">No.</th>
+                <th scope="col" class="text-center">제목</th>
+                <th scope="col" class="text-center">작성일</th>
+               </tr>
             </thead>
             <tbody>
-            {%if question_list%}
-                {% for question in question_list%}
-                <tr>
-                    <td class="text-center">{{forloop.counter}}</td>
-                    <td class="text-start"><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a></td>
-                    <td class="text-center">{{question.create_date|date:"Y-m-d"}}</td>
-                </tr>
-                {% endfor %}
+            {% if question_list %}
+                {% for question in question_list  %}
+                    <tr>
+                        <!--일련번호 = 전체 글수 - 시작 인덱스 - 현재 인덱스 + 1 -->
+                        <td class="text-center">{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1   }}</td> <!-- 가운데 정렬 -->
+                        <td class="text-start"><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a>
+                        {% if question.answer_set.count > 0 %}    <!--답변이 있는 경우-->
+                            <span class="text-danger small mx-2">{{question.answer_set.count}}</span>
+                        {% endif %}
+                        </td> <!-- 왼쪽 정렬 -->
+                        <td class="text-center">{{question.create_date|date:"Y-m-d"}}</td>
+                    </tr>
+                {% endfor  %}
             {% else %}
-                <tr>
-                    <td colspan="99">질문이 없습니다.</td>
-                </tr>
-            {%endif%}
+                    <tr>
+                        <td colspan="99">질문이 없습니다.</td>
+                    </tr>
+            {% endif %}
             </tbody>
         </table>
         {% csrf_token %}
+
+        <!--페이징 처리-->
+        <ul class="pagination justify-content-center">
+          <!--이전 페이지 -->
+          {% if question_list.has_previous %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ question_list.previous_page_number }}">&laquo;</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+              <a class="page-link" aria-disabled="true" href="#">&laquo;</a>
+          </li>
+          {% endif%}
+          <!--이전 페이지 end------------------------>
+
+          <!--페이지 리스트 paginator.page_range-->
+          {% for page_number in question_list.paginator.page_range%}
+          <!--현재 선택 페이지와 나머지 -->
+          <!-- 페이지 번호가 현재 페이지 기누으로 좌우 5개씩 보이도록 처리-->
+          {% if page_number >= question_list.number|add:-5 and page_number <= question_list.number|add:5 %}
+          {% if page_number == question_list.number %}
+          <li class="page-item active" aria-current="page">
+              <a class="page-link" href="#">{{page_number}}</a>
+          </li>
+          {% else %}
+          <li class="page-item active" aria-current="page">
+              <a class="page-link" href="?page={{page_number}}">{{page_number}}</a>
+          </li>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          <!--페이지 리스트 end-->
+
+          <!--다음 페이지 -->
+          {% if question_list.has_next %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ question_list.next_page_number }}">&raquo;</a>
+          </li>
+          {% else %}
+          <li class="page-item">
+              <a class="page-link" tabindex="-1" aria-disabled="true" href="#">&raquo;</a>
+          </li>
+
+          {% endif %}
+          <!--다음 페이지 end-->
+        </ul>
+        <!--페이징 처리 end---------------------------------------->
     </div>
-    <!--container end-->
-    {%endblock%}
+    <!-- container end-->
+    {% endblock %}
