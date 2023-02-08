@@ -7,7 +7,7 @@
             <h2>질문등록</h2>
         </div>
 
-        <form method="post" action="{%url 'pybo:question_create' %}" class="">
+        <form method="post"  class="">
             {% csrf_token %}
             <!--form validation-->
             {% include "form_error.html" %}

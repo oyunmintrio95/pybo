@@ -1,0 +1,61 @@
+{% extends 'base.html'%}
+{% block content %}
+<!--container-->
+<div class="container">
+    <!--제목-->
+    <div class="mt-2">
+        <h2>회원가입</h2>
+        <hr>
+    </div>
+    <!--제목 end-->
+    <!--등록 form-->
+    <form action="{% url 'common:signup' %}" method="POST">
+        {% csrf_token %}
+        <!--form validation-->
+        {% include 'form_error.html' %}
+
+        <!--사용자 이름-->
+        <div class="mb-3 row">
+            <label for="username" class="">사용자ID</label>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
+            <input type="text" class=" form-control" id="username" name="username"
+                   value="{{form.username.value|default_if_none:''}}" required>
+        </div>
+        <!--사용자 이름 end--------------->
+        <!--비밀번호-->
+         <div class="mb-3 row">
+            <label for="password1" class="">비밀번호</label>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
+            <input type="password" class=" form-control" id="password1" name="password1"
+                   value="{{form.password1.value|default_if_none:''}}" required>
+        </div>
+        <!--비밀번호 end----------------------------------------->
+        <!--비밀번호 확인-->
+        <div class="mt-3 mb-2">
+            <label for="password2" class="">비밀번호 확인</label>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
+            <input type="password" class=" form-control" id="password2" name="password2"
+                   value="{{form.password2.value|default_if_none:''}}" required>
+        </div>
+        <!--비밀번호 확인 end---------------------------------------->
+        <!--이메일-->
+        <div class="mt-3 mb-2">
+            <label for="email" class="">이메일</label>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
+            <input type="email" class=" form-control" id="email" name="email"
+                   value="{{form.email.value|default_if_none:''}}" required>
+        </div>
+        <!--이메일 ends---------------------------------------------->
+        <div class="d-grid gap-2 mb-1 md-flex justify-content-start mt-3">
+                <input type="submit" class="btn btn-primary btn-sm" value="회원가입">
+        </div>
+    </form>
+    <!--등록 form ends------------------------------------------->
+
+</div>
+<!--container ends----------------------------------------------->
+{% endblock %}

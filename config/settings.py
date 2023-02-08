@@ -16,6 +16,11 @@ import os  #logging
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#로그인 성공 시 이동될 URL
+LOGIN_REDIRECT_URL = '/'
+
+#로그아웃 시 이동될 URL
+LOGOUT_REDIRECT_URL = '/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -147,7 +152,7 @@ LOGGING = {
 	    },
 	    # 형식정의
 	    'formatters': {
-	        'format1': {'format': '[%(asctime)s] %(module)s -%(lineno)d %(levelname)s %(message)s','datefmt': "%Y-%m-%d %H:%M:%S"},
+	        'format1': {'format': '[%(asctime)s] %(module)s -%(funcName)s -%(lineno)d %(levelname)s %(message)s','datefmt': "%Y-%m-%d %H:%M:%S"},
 	        'format2': {'format': '%(levelname)s %(message)s [%(name)s:%(lineno)s]'},
 	    },
 	    'handlers': {

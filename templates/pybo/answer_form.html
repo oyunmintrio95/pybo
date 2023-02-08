@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    <!--container-->
+    <div class="container">
+        <!--제목-->
+        <div class="text-start mb-5">
+            <h2>답변수정</h2>
+        </div>
+         <!--
+        action 이동이 현재 URL로 이동
+        http://127.0.0.1:8000/pybo/answer/modify/15/
+         -->
+        <form method="post" class="post-form my-3">
+            {% csrf_token %}
+            <!--form validation기능-->
+            {% include "form_error.html" %}
+            <!--form validation 기능 end ------------------>
+            <div class="mb-3">
+                <label for="content" class="col-form-label">답변내용</label>
+                <div>
+                    <textarea class="form-control" name="content" id="content" rows="10">{{form.content.value|default_if_none:''}}</textarea>
+                </div>
+            </div>
+            <!--모델 폼과 연결된 content에 값을 저장할 수 있는 form 생성-->
+            <button type="submit" class="btn btn-outline-primary btn-sm">수정</button>
+        </form>
+    </div>
+
+    <!--container end------------------------------------>
+{% endblock %}

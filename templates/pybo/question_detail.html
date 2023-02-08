@@ -9,11 +9,41 @@
             <!--pre-line
                 연속 공백을 하나로 합침. 줄바꿈은 개행 문자와 <br> 요소에서 일어나며,
                 한 줄이 너무 길어서 넘칠 경우 자동으로 줄을 바꿉니다.-->
+            <!--message 표시-->
+            {% if messages %}
+            <div class="alert alert-danger" role="alert">
+                {% for message in messages %}
+                <strong>{{message.tags}}</strong>
+                <ul>
+                    <li>{{message.message}}</li>
+                </ul>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!--message 표시 end---------------------->
             <div class="card-text" style="white-space pre-line">{{question.content}}</div>
+            <!--수정자, 수정일-->
+            {% if question.modify_date %}
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2">
-                {{question.create_date}}
+                    <div class="mb-2"> 수정일: </div>
+                    <div>{{question.modify_date}}</div>
                 </div>
+            </div>
+            {% endif %}
+            <!--수정자, 수정일 end-->
+             <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    <div class="mb-2"> 질문자: {{question.author.username}}</div>
+                    <div>{{question.create_date}}</div>
+                </div>
+            </div>
+            <!--질문 수정 버튼-->
+            <div class="my-3">
+                {% if question.author == request.user %} <!--글쓴이와 로그인한 사용자가 동일하면 -->
+                <a href="{% url 'pybo:question_modify' question.id %}" class="btn btn-outline-primary btn-sm" >수정</a>
+                <a href="javascript:void(0);" data-uri="{% url 'pybo:question_delete' question.id %}"  class="delete btn btn-outline-danger btn-sm" >삭제</a>
+                {% endif %}
             </div>
         </div>
         <!--질문 end ----------------------------------------------------->
@@ -25,11 +55,29 @@
                 연속 공백을 하나로 합침. 줄바꿈은 개행 문자와 <br> 요소에서 일어나며,
                 한 줄이 너무 길어서 넘칠 경우 자동으로 줄을 바꿉니다.-->
             <div class="card-text" style="white-space pre-line">{{answer.content}}</div>
+             <!--수정자, 수정일-->
+            {% if answer.modify_date %}
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2">
-                {{answer.create_date}}
+                    <div class="mb-2"> 수정일: </div>
+                    <div>{{answer.modify_date}}</div>
                 </div>
             </div>
+            {% endif %}
+            <!--수정자, 수정일 end-->
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    <div class="mb-2">답변자: {{answer.author.username}}</div>
+                    <div>{{answer.create_date}}</div>
+                </div>
+            </div>
+            <!--답변 수정 버튼-->
+            {% if answer.author == request.user %}
+            <div class="my-3">
+                <a href="{% url 'pybo:answer_modify' answer.id %}" class="btn btn-sm btn-outline-warning">수정</a>
+                <a href="#" data-uri="{% url 'pybo:answer_delete' answer.id %}" class="delete btn btn-outline-danger btn-sm">삭제</a>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
         <!--답변 end-------------------------------------------------------->
@@ -48,7 +96,28 @@
         <!--답변 등록 end--------------------------------------------------->
     </div>
     <!--container end------------------------------------------------------>
+
+    {% endblock %}
+    {% block script%}
     <script>
+        //삭제: getElementsByClassName 'delete' 클래스 이름으로 element 찾기
+        //Array.from() 메서드는 유사 배열 객체(array-like object)나
+        //반복 가능한 객체(iterable object)를 얕게 복사해 새로운Array 객체를 만듭니다.
+        //const delete_elements = document.querySelectorAll(".delete")
+
+        const delete_elements = document.getElementsByClassName('delete');
+        Array.from(delete_elements).forEach(function(element){
+            element.addEventListener('click',function(){
+                console.log('delete click');
+                if(confirm('삭제 하시겠습니까?')){
+                    console.log('삭제하시겠습니까?');
+                    //url호출
+                    console.log('this.dataset.uri:'+this.dataset.uri)
+                    location.href = this.dataset.uri
+                }
+            });
+        });
+
         function doSave(){
             <!--console.log('doSave');-->
             let frm = document.answer_frm;
@@ -59,8 +128,6 @@
                 frm.content.focus();
                 return ;
             }
-            //서버로 전송
-            frm.submit();
         }
     </script>
-    {%endblock%}
+    {% endblock %}
