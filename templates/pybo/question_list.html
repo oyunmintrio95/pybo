@@ -8,14 +8,38 @@
         <div class="text-start mb-5">
             <h2>질문목록</h2>
         </div>
-        <div class="text-end my-1">
-            <a href="{% url 'pybo:question_create' %}" class="btn btn-primary btn-sm">등록</a>
+          <!--검색, 버튼-->
+        <div class="d-grid gap-2 d-md-flex justify-content-end mb-3">
+            <div class="text-end my-1" >
+                <select class="form-select-sm" id="search_div">
+                    <option selected value="">전체</option>
+                    <option value="10" {% if '10' == div %} selected {% endif %}>제목</option>
+                    <option value="20" {% if '20' == div %} selected {% endif %}>내용</option>
+                    <option value="30" {% if '30' == div %} selected {% endif %}>작성자</option>
+                </select>
+                <input type="text" class="form-control-sm" id="search_kw" value="{{ kw | default_if_none:'' }}" placeholder="검색어">
+                <select class="form-select-sm" id="page_size">
+                    <option value="10" {% if '10' == size %} selected {% endif %}>10</option>
+                    <option value="20" {% if '20' == size %} selected {% endif %}>20</option>
+                    <option value="30" {% if '30' == size %} selected {% endif %}>30</option>
+                    <option value="50" {% if '50' == size %} selected {% endif %}>50</option>
+                    <option value="100" {% if '100' == size %} selected {% endif %}>100</option>
+                </select>
+            </div>
+            <div class="text-end my-1">
+                <button class="btn btn-primary btn-sm" id="btn_search">조회</button>
+                <a href="{% url 'pybo:question_create' %}" class="btn btn-primary btn-sm">등록</a>
+            </div>
         </div>
+
+
+
         <!-- 제목 end-->
         <table class="table table-striped table-hover table-bordered table-sm">
             <thead>
                <tr class="table-dark">
                 <th scope="col" class="text-center">No.</th>
+                <th scope="col" class="text-center">좋아요</th>
                 <th scope="col" class="text-center" style="width:50%;">제목</th>
                 <th scope="col" class="text-center">글쓴이</th>
                 <th scope="col" class="text-center">작성일</th>
@@ -27,6 +51,11 @@
                     <tr>
                         <!--일련번호 = 전체 글수 - 시작 인덱스 - 현재 인덱스 + 1 -->
                         <td class="text-center">{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1   }}</td> <!-- 가운데 정렬 -->
+                        <td class="text-start">
+                            {% if question.voter.all.count > 0 %}
+                            <span class="badge rounded-pill bg-success">{{question.voter.all.count}}</span>
+                            {% endif %}
+                        </td><!--좋아요-->
                         <td class="text-start"><a href="{% url 'pybo:detail' question.id %}">{{question.subject}}</a>
                         {% if question.answer_set.count > 0 %}    <!--답변이 있는 경우-->
                             <span class="text-danger small mx-2">{{question.answer_set.count}}</span>
@@ -50,7 +79,7 @@
           <!--이전 페이지 -->
           {% if question_list.has_previous %}
           <li class="page-item">
-              <a class="page-link" href="?page={{ question_list.previous_page_number }}">&laquo;</a>
+              <a class="page-link" data-page="{{question_list.previous_page_number}}" href="javascript:void(0)">&laquo;</a>
           </li>
           {% else %}
           <li class="page-item disabled">
@@ -58,19 +87,24 @@
           </li>
           {% endif%}
           <!--이전 페이지 end------------------------>
-
           <!--페이지 리스트 paginator.page_range-->
           {% for page_number in question_list.paginator.page_range%}
+
+            {% comment %}
           <!--현재 선택 페이지와 나머지 -->
-          <!-- 페이지 번호가 현재 페이지 기누으로 좌우 5개씩 보이도록 처리-->
+          <!-- 페이지 번호가 현재 페이지 기준으로 좌우 5개씩 보이도록 처리-->
+            {% endcomment %}
+
           {% if page_number >= question_list.number|add:-5 and page_number <= question_list.number|add:5 %}
           {% if page_number == question_list.number %}
           <li class="page-item active" aria-current="page">
-              <a class="page-link" href="#">{{page_number}}</a>
+              <a class="page-link" data-page="{{page_number}}"
+                 href="javascript:void(0);">{{page_number}}</a>
           </li>
           {% else %}
-          <li class="page-item active" aria-current="page">
-              <a class="page-link" href="?page={{page_number}}">{{page_number}}</a>
+          <li class="page-item" aria-current="page">
+              <a class="page-link" data-page="{{page_number}}"
+                 href="javascript:void(0);">{{page_number}}</a>
           </li>
           {% endif %}
           {% endif %}
@@ -80,11 +114,12 @@
           <!--다음 페이지 -->
           {% if question_list.has_next %}
           <li class="page-item">
-              <a class="page-link" href="?page={{ question_list.next_page_number }}">&raquo;</a>
+              <a class="page-link" data-page="{{ question_list.next_page_number }}"
+                 href="javascript:void(0);">&raquo;</a>
           </li>
           {% else %}
           <li class="page-item">
-              <a class="page-link" tabindex="-1" aria-disabled="true" href="#">&raquo;</a>
+              <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0);">&raquo;</a>
           </li>
 
           {% endif %}
@@ -93,4 +128,66 @@
         <!--페이징 처리 end---------------------------------------->
     </div>
     <!-- container end-->
+    <form method="get" id="searchForm" action="{% url 'index' %}">
+        <input type="hidden" name="kw" id="kw" value="{{kw | default_if_none:''}}">
+        <input type="hidden" name="page" id="page" value="{{page}}" >
+        <input type="hidden" name="div" id="div" value="{{div|default_if_none:''}}">
+        <input type="hidden" name="size" id="size" value="{{size}}">
+    </form>
     {% endblock %}
+
+    <!--javascript-->
+    {% block script %}
+        <script>
+            //page-link class
+            const pageLinks = document.querySelectorAll(".page-link");
+            Array.from(pageLinks).forEach(function(element){
+                element.addEventListener('click', function(){
+                  // console.log('page_link click');
+                  //console.log('this.dataset.page: '+ this.dataset.page);
+                  //document.querySelector('#page').value = this.dataset.page;
+                  doRetrieve(1)
+                });
+            });
+
+            const search-kw = document.querySelector("#search_kw")
+            search_kw.addEventListener("keyup",function(event){
+                console.log('search_kw'+event.keyCode)
+                if(event.keyCode == 13){//Enter
+                    doRetrieve(1);
+                }
+
+            });
+
+            functon doRetrieve(page){
+                document.querySelector('#kw').value = document.querySelector('#search_kw').value;
+                document.querySelector('#page').value = page; //조회는 페이지 번호 무조건 1
+                document.querySelector('#div').value = document.querySelector('#search_div').value; //조회는 페이지 번호 무조건 1
+                document.querySelector('#size').value = document.querySelector('#page_size').value; //페이지 사이즈 조회
+
+                console.log('kw: '+document.querySelector('#kw').value);
+                console.log('page: '+document.querySelector('#page').value);
+                console.log('div: '+document.querySelector('#div').value);
+                console.log('size: '+document.querySelector('#size').value);
+                document.querySelector('#searchForm').submit();
+            }
+            //btn_search : 검색어, page를 searchForm에 할당
+            const btn_search = document.querySelector("#btn_search");
+            btn_search.addEventListener('click', function(){
+                console.log('btn_search');
+
+                document.querySelector('#kw').value = document.querySelector('#search_kw').value;
+                document.querySelector('#page').value = 1; //조회는 페이지 번호 무조건 1
+                document.querySelector('#div').value = document.querySelector('#search_div').value; //조회는 페이지 번호 무조건 1
+
+                console.log('kw: '+document.querySelector('#kw').value);
+                console.log('page: '+document.querySelector('#page').value);
+                console.log('div: '+document.querySelector('#div').value);
+                //http://127.0.0.1:8000/?kw=&page=1
+                document.querySelector('#searchForm').submit();
+
+
+            });
+        </script>
+    {% endblock %}
+    <!--javascript end----------------->

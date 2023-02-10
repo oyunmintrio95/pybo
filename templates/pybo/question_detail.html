@@ -1,5 +1,5 @@
 {%extends 'base.html' %}
-
+{% load pybo_filter %}
 {% block content %}
   <!--container-->
     <div class="container">
@@ -21,7 +21,7 @@
             </div>
             {% endif %}
             <!--message 표시 end---------------------->
-            <div class="card-text" style="white-space pre-line">{{question.content}}</div>
+            <div class="card-text" >{{question.content|mark}}</div>
             <!--수정자, 수정일-->
             {% if question.modify_date %}
             <div class="d-flex justify-content-end">
@@ -32,14 +32,20 @@
             </div>
             {% endif %}
             <!--수정자, 수정일 end-->
+            <!--등록자, 등록일-->
              <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2">
                     <div class="mb-2"> 질문자: {{question.author.username}}</div>
                     <div>{{question.create_date}}</div>
                 </div>
             </div>
+            <!--등록자, 등록일 end-->
             <!--질문 수정 버튼-->
             <div class="my-3">
+                <!--좋아요-->
+                <a href="javascript:void(0);"
+                   data-uri="{% url 'pybo:question_vote' question.id %}"  class="recommend btn btn-outline-primary btn-sm" >
+                    좋아요 <i class="bi bi-hearts"></i> <span class="badge bg-success rounded-pill">{{question.voter.count}}</span></a>
                 {% if question.author == request.user %} <!--글쓴이와 로그인한 사용자가 동일하면 -->
                 <a href="{% url 'pybo:question_modify' question.id %}" class="btn btn-outline-primary btn-sm" >수정</a>
                 <a href="javascript:void(0);" data-uri="{% url 'pybo:question_delete' question.id %}"  class="delete btn btn-outline-danger btn-sm" >삭제</a>
@@ -50,11 +56,14 @@
       <!--답변-->
       <h5 class="border-bottom py-2 my-3">{{question.answer_set.count}} 개의 답변이 있습니다.</h5>
         {%for answer in question.answer_set.all%}
+
         <div class="card mb-3">
             <!--pre-line
                 연속 공백을 하나로 합침. 줄바꿈은 개행 문자와 <br> 요소에서 일어나며,
                 한 줄이 너무 길어서 넘칠 경우 자동으로 줄을 바꿉니다.-->
-            <div class="card-text" style="white-space pre-line">{{answer.content}}</div>
+            <!--answer_+answer.id-->
+            <a id="answer_{{answer.id}}"></a>
+            <div class="card-text" style="white-space pre-line" >{{answer.content}}</div>
              <!--수정자, 수정일-->
             {% if answer.modify_date %}
             <div class="d-flex justify-content-end">
@@ -71,13 +80,20 @@
                     <div>{{answer.create_date}}</div>
                 </div>
             </div>
+
             <!--답변 수정 버튼-->
-            {% if answer.author == request.user %}
+
             <div class="my-3">
+                <!--좋아요-->
+                 <a href="javascript:void(0);"
+                   data-uri="{% url 'pybo:answer_vote' answer.id %}"  class="recommend btn btn-outline-primary btn-sm" >
+                    좋아요 <i class="bi bi-hearts"></i> <span class="badge bg-success rounded-pill">{{answer.voter.count}}</span></a>
+                {% if answer.author == request.user %}
                 <a href="{% url 'pybo:answer_modify' answer.id %}" class="btn btn-sm btn-outline-warning">수정</a>
                 <a href="#" data-uri="{% url 'pybo:answer_delete' answer.id %}" class="delete btn btn-outline-danger btn-sm">삭제</a>
+                {% endif %}
             </div>
-            {% endif %}
+
         </div>
         {% endfor %}
         <!--답변 end-------------------------------------------------------->
@@ -105,6 +121,7 @@
         //반복 가능한 객체(iterable object)를 얕게 복사해 새로운Array 객체를 만듭니다.
         //const delete_elements = document.querySelectorAll(".delete")
 
+       //DELETE button
         const delete_elements = document.getElementsByClassName('delete');
         Array.from(delete_elements).forEach(function(element){
             element.addEventListener('click',function(){
@@ -112,22 +129,25 @@
                 if(confirm('삭제 하시겠습니까?')){
                     console.log('삭제하시겠습니까?');
                     //url호출
-                    console.log('this.dataset.uri:'+this.dataset.uri)
-                    location.href = this.dataset.uri
+                    console.log('this.dataset.uri:'+this.dataset.uri);
+                    location.href = this.dataset.uri;
                 }
             });
         });
 
-        function doSave(){
-            <!--console.log('doSave');-->
-            let frm = document.answer_frm;
-            let content = frm.content.value;
-            console.log('content'+content);
-            if(isEmpty(content) == true){
-                alert('내용을 입력 하세요');
-                frm.content.focus();
-                return ;
-            }
-        }
+        //question:좋아요
+        const recommend_elements = document.querySelectorAll(".recommend");
+        Array.from(recommend_elements).forEach(function(element){
+            element.addEventListener('click', function(){
+                console.log('recommend click')
+                if (confirm('추천하시겠습니까?')){
+                    console.log('recommend?');
+                    //url호출
+                    console.log('this.dataset.uri:'+this.dataset.uri);
+                    location.href = this.dataset.uri;
+                }
+            })
+        })
+
     </script>
     {% endblock %}

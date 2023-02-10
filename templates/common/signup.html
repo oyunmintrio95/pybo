@@ -20,7 +20,7 @@
         </div>
         <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
             <input type="text" class=" form-control" id="username" name="username"
-                   value="{{form.username.value|default_if_none:''}}" required>
+                   value="{{form.username.value|default_if_none:''}}">
         </div>
         <!--사용자 이름 end--------------->
         <!--비밀번호-->
@@ -29,7 +29,7 @@
         </div>
         <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
             <input type="password" class=" form-control" id="password1" name="password1"
-                   value="{{form.password1.value|default_if_none:''}}" required>
+                   value="{{form.password1.value|default_if_none:''}}">
         </div>
         <!--비밀번호 end----------------------------------------->
         <!--비밀번호 확인-->
@@ -38,7 +38,7 @@
         </div>
         <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
             <input type="password" class=" form-control" id="password2" name="password2"
-                   value="{{form.password2.value|default_if_none:''}}" required>
+                   value="{{form.password2.value|default_if_none:''}}">
         </div>
         <!--비밀번호 확인 end---------------------------------------->
         <!--이메일-->
@@ -47,7 +47,7 @@
         </div>
         <div class="col-sm-3 col-md-3 col-lg-3 col-form-label">
             <input type="email" class=" form-control" id="email" name="email"
-                   value="{{form.email.value|default_if_none:''}}" required>
+                   value="{{form.email.value|default_if_none:''}}">
         </div>
         <!--이메일 ends---------------------------------------------->
         <div class="d-grid gap-2 mb-1 md-flex justify-content-start mt-3">

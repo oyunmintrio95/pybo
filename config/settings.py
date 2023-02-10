@@ -175,6 +175,11 @@ LOGGING = {
 	        },
 	    },
 	    'loggers': {
+			'django.db.bacKends':{
+				'handlers':['file','console'],
+				'propagate': False,
+				'level': 'DEBUG'
+			},
 	        #종류
 	        'django.server': {
 	            'handlers': ['file','console'],

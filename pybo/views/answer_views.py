@@ -9,11 +9,28 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 
 from ..forms import AnswerForm
 from ..models import Question, Answer
+
+@login_required(login_url='common:login')
+def answer_vote(request, answer_id):
+    '''답변: 좋아요'''
+    logging.info('1.answer_vote:{}'.format(answer_id))
+    answer = get_object_or_404(Answer, pk=answer_id)
+
+    #본인 글은 추천하지 못하게
+    if request.user == answer.author:
+        logging.info('2.request.user:{}'.format(request.user))
+        logging.info('2.anaswer.author:{}'.format(answer.author))
+        messages.error(request, '본인이 작성한 글은 추천할 수 없습니다.')
+    else:
+        answer.voter.add(request.user)
+    logging.info('2.question_id:{}'.format(answer.question.id))
+    return redirect('{}#answer_{}'.
+                    format(resolve_url('pybo:detail', question_id=answer.question.id), answer.id))
 
 
 @login_required(login_url='common:login')
@@ -53,7 +70,8 @@ def answer_modify(request, answer_id):
             logging.info('3.answer_modify POST form.is_valid:{}'.format(answer))
             answer = form.save()
             #수정화면
-            return redirect('pybo:detail', question_id=answer.question.id)
+            return redirect('{}#answer_{}'.
+                            format(resolve_url('pybo:detail', question_id=answer.question.id), answer.id))
     else:                       #수정 form template
         form = AnswerForm(instance=answer)
     context = {'answer':answer, 'form':form}
@@ -76,7 +94,8 @@ def answer_create(request, question_id):
 
             logging.info('3.answer.author:{}'.format(answer.author))
             answer.save() #최종 저장
-            return redirect('pybo:detail', question_id=question_id)
+            return redirect('{}#answer_{}'.
+                            format(resolve_url('pybo:detail',question_id = question.id), answer.id ))
     else:
         logging.info('1.else:{}')
         form = AnswerForm()
