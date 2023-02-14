@@ -14,7 +14,7 @@ from pathlib import Path
 import os  #logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 #로그인 성공 시 이동될 URL
 LOGIN_REDIRECT_URL = '/'
@@ -30,8 +30,9 @@ SECRET_KEY = 'django-insecure-33fbm&s2$2@aj3z72jr#a*0s0@%-yu(z_bt)qo1s6a^(hvbr=(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['localhost']
+# ALLOWED_HOSTS = ["43.200.203.164"]
 # ALLOWED_HOSTS = ['127.0.0.1','192.168.0.']
 
 
