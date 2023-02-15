@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load board_filter %}
+{% block content %}
+<!--container-->
+<div class="container">
+    <!--제목-->
+    <h2 class="boarder-bottom py-2">{{board.subject}}</h2>
+    <!--제목 end-->
+    <div class="card my-3">
+        <!--,essage 표시-->
+        {% if messages %}
+        <div class="alert alert-danger" role="alert">
+            {% for message in messages %}
+            <strong>{{message.tags}}</strong>
+            <ul>
+                <li>
+                    {{message.message}}
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!--message 표시 end-->
+        <div class="card-text">{{board.content|mark}}</div>
+        <div class="d-flex justify-content-end">
+            <!--수정자, 수정일-->
+            {% if board.modify_date %}
+            <div class="badge bg-light text-dark p-2 text-start mx-3">
+                <div class="mb-2">수정일</div>
+                <div>{{board.modify_date}}</div>
+            </div>
+            {% endif %}
+            <!--수정자, 수정일 end----------->
+            <!--등록자, 등록일-->
+            <div class="badge bg-light text-dark p-2 text-start">
+                <div class="mb-2">{{board.author.username}}</div>
+                <div>{{board.create_date}}</div>
+            </div>
+            <!--등록자, 등록일 end--------->
+        </div>
+        <!--질문 수정-->
+        <div class="my-3">
+            {% if board.author == request.user%}
+            <a href="{% url 'board:board_modify' board.id %}" class="btn btn-sm btn-outline-success">수정</a>
+            <a href="javascript:void(0);" data-uri="{% url 'board:board_delete' board.id %}" class="delete btn btn-sm btn-outline-danger">삭제</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!--container end----------->
+
+{% endblock %}
+{% block script %}
+    <script>
+        const delete_elements = document.querySelectorAll(".delete");
+        Array.from(delete_elements).forEach(function(element){
+            element.addEventListener('click',function(){
+                console.log('delete click');
+                if(confirm('삭제 하시겠습니까?')){
+                    console.log('삭제하시겠습니까?');
+                    console.log('this.dataset.uri:'+this.dataset.uri);
+                    location.href = this.dataset.uri;
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+    <!--container-->
+    <div class="container">
+        <!--제목-->
+        <div class="text-start mb-5">
+            <h2>게시물 등록</h2>
+        </div>
+        <!--제목 end----------->
+        <!--form starts-->
+        <form method="post" class="post-form m-3">
+            {% csrf_token %}
+            <!--form validation 기능-->
+            {% include 'form_error.html' %}
+            <!--form validation 기능 end---->
+
+            <div class="mb-3">
+                <label for="subject" class="col-form-label">제목</label>
+                <div class="">
+                    <input type="text" class="form-control" id="subject" name="subject" value="{{form.subject.value|default_if_none:''}}">
+                </div>
+            </div>
+            <div>
+                <label for="content" class="col-form-label">내용</label>
+                <div>
+                    <textarea rows="10" class="form-control" name="content" id="content">{{form.content.value|default_if_none:''}}</textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">저장</button>
+        </form>
+        <!--form ends-->
+    </div>
+    <!--container end----------------->
+{% endblock %}
