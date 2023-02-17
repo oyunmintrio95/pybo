@@ -6,6 +6,7 @@ Description:
 since 2023.01.09 Copyright (C) by YoungCheon All right reserved.
 '''
 import logging
+logger = logging.getLogger('pybo')
 
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404

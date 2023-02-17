@@ -135,62 +135,67 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# 로깅설정
 LOGGING = {
-	    'version': 1,
-	    'disable_existing_loggers': False,
-	    'filters': {
-	        'require_debug_false': {
-	            '()': 'django.utils.log.RequireDebugFalse',
-	        },
-	        'require_debug_true': {
-	            '()': 'django.utils.log.RequireDebugTrue',
-	        },
-	    },
-	    # 형식정의
-	    'formatters': {
-	        'format1': {'format': '[%(asctime)s] %(module)s -%(funcName)s -%(lineno)d %(levelname)s %(message)s','datefmt': "%Y-%m-%d %H:%M:%S"},
-	        'format2': {'format': '%(levelname)s %(message)s [%(name)s:%(lineno)s]'},
-	    },
-	    'handlers': {
-	        # 파일저장
-	        'file': {
-	                'level': 'INFO',
-	                'class': 'logging.handlers.RotatingFileHandler',
-	                'filename': os.path.join(BASE_DIR, 'logs/python_pybo.log'),
-	                'encoding': 'UTF-8',
-	                'maxBytes': 1024 * 1024 * 5,  # 5 MB
-	                'backupCount': 5,
-	                'formatter': 'format1',
-	                },
-	        # 콘솔(터미널)에 출력
-	        'console': {
-	            'level': 'INFO',
-	            'filters': ['require_debug_true'],
-	            'class': 'logging.StreamHandler',
-                'formatter': 'format1'
-	        },
-	    },
-	    'loggers': {
-			'django.db.bacKends':{
-				'handlers':['file','console'],
-				'propagate': False,
-				'level': 'DEBUG'
-			},
-	        #종류
-	        'django.server': {
-	            'handlers': ['file','console'],
-	            'propagate': False,
-	            'level': 'DEBUG',
-	        },
-	        'django.request': {
-	            'handlers':['file','console'],
-	            'propagate': False,
-	            'level':'DEBUG',
-	        },
-	        '': {
-	            'level': 'DEBUG',
-	            'handlers': ['file','console'],
-	            'propagate': True,
-	        },
-	    },
-	}
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+		'standard': {
+			'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+		},
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+		'file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/mysite.log',
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'pybo': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+    }
+}
